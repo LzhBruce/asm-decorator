@@ -32,23 +32,17 @@ public class HessianRedisTemplate extends RedisTemplate<String, Object> implemen
 
     private static HessianRedisTemplate getInstance() {
         if (applicationContext == null) {
-            throw new BeanInstantiationException(HessianRedisTemplate.class,"");
+            throw new BeanInstantiationException(HessianRedisTemplate.class,"HessianRedisTemplate not exist in ApplicationContext.");
         }
         HessianRedisTemplate redisTemplate = applicationContext.getBean(HessianRedisTemplate.class);
         return redisTemplate;
     }
 
     public static Object getObject(String group, String key) {
-        System.out.println(group);
-        System.out.println(key);
         return getInstance().get(group,key);
     }
 
     public static void putObject(String group,String key,Object value,long expire, TimeUnit timeUnit) {
-        System.out.println(group);
-        System.out.println(key);
-        System.out.println(value);
-        System.out.println(expire);
         getInstance().put(group,key,value,expire,timeUnit);
     }
 

@@ -4,6 +4,7 @@ package about.me.trace.test;
 //import org.apache.dubbo.common.timer.Timeout;
 //import org.apache.dubbo.common.timer.TimerTask;
 import about.me.trace.asm.TraceClassVisitor;
+import about.me.trace.test.bean.TimerTest;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -28,27 +29,34 @@ public class Generator {
 //            }
 //        },1,TimeUnit.SECONDS);
 
+//        new TimerTest().get();
+//
         try {
-            ClassReader cr = new ClassReader("about/me/trace/test/TimerTest");
+            ClassReader cr = new ClassReader("about/me/trace/test/bean/TimerTest");
             // ClassWriter extends ClassVisitor
             ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
             ClassVisitor classAdapter = new TraceClassVisitor(cw);
             // 使给定的访问者访问Java类的ClassReader
-            cr.accept(classAdapter, ClassReader.SKIP_DEBUG);
+            cr.accept(classAdapter, ClassReader.EXPAND_FRAMES);
             byte[] data = cw.toByteArray();
-            File file = new File("/Users/hugozxh/workspace/trace/target/classes/about/me/trace/test/TimerTest.class");
+            File file = new File("/Users/hugozxh/workspace/trace/target/classes/about/me/trace/test/bean/TimerTest.class");
             FileOutputStream fout = new FileOutputStream(file);
             fout.write(data);
             fout.close();
             System.out.println("success!");
 
-            new TimerTest().get();
+            User user = new User();
+            user.setName("java");
 
-            //new TimerTest().m();
+            System.out.println(new TimerTest().get(user));
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        } /*catch (Exception e) {
+            e.printStackTrace();
+            Trace.exit(e.getMessage());
+        }*/
     }
 }

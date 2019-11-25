@@ -5,10 +5,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -34,7 +31,7 @@ public class TraceEnhance {
 
     public static void inject(String className, ClassLoader classLoader) {
         try {
-            URL url = (URL) findResource.invoke(classLoader, new Object[] { className.replace(".", File.separator) + ".class" });
+            URL url = (URL) findResource.invoke(classLoader, new Object[] { className.replace('.','/') + ".class" });
             if (url == null) {
                 log.debug("{} not found!", className);
                 return;
@@ -52,11 +49,11 @@ public class TraceEnhance {
             }
             log.debug("Added trace function for {}", className);
         } catch (IOException e) {
-            log.error(e.getMessage(),e);
+            log.error(className,e);
         } catch (IllegalAccessException e) {
-            log.error(e.getMessage(),e);
+            log.error(className,e);
         } catch (InvocationTargetException e) {
-            log.error(e.getMessage(),e);
+            log.error(className,e);
         }
     }
 
@@ -64,7 +61,7 @@ public class TraceEnhance {
         ClassReader reader = new ClassReader(clazzByte);
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         ClassVisitor visitor = new TraceClassVisitor(writer);
-        reader.accept(visitor, 0);
+        reader.accept(visitor, ClassReader.EXPAND_FRAMES);
         return writer.toByteArray();
     }
 
